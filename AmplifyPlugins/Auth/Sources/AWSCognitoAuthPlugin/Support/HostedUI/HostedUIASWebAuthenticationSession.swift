@@ -65,7 +65,7 @@ class HostedUIASWebAuthenticationSession: NSObject, HostedUISessionBehavior {
             aswebAuthenticationSession.prefersEphemeralWebBrowserSession = inPrivate
 
             DispatchQueue.main.async {
-                start(session: aswebAuthenticationSession, continuation: continuation)
+                self.start(session: aswebAuthenticationSession, continuation: continuation)
             }
         }
 
@@ -77,13 +77,13 @@ class HostedUIASWebAuthenticationSession: NSObject, HostedUISessionBehavior {
     private func start(session: ASWebAuthenticationSession, continuation: CheckedContinuation<[URLQueryItem], any Error>, attempts: Int = 0) {
         var canStart = true
         if #available(macOS 10.15.4, iOS 13.4, *) {
-            canStart = aswebAuthenticationSession.canStart
+            canStart = session.canStart
         }
         if Test.isSignIn {
             canStart = false
         }
         
-        if session.canStart {
+        if canStart {
             session.start()
         } else if attempts < 10 {
             Test.isSignIn = false
