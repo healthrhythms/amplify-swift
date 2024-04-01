@@ -12,7 +12,7 @@ import AuthenticationServices
 #endif
 
 public enum Test {
-    static var isSignIn = false
+    public static var isSignIn = false
 }
 
 class HostedUIASWebAuthenticationSession: NSObject, HostedUISessionBehavior {
