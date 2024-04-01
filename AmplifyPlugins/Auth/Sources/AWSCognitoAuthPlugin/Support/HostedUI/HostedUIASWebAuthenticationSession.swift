@@ -65,18 +65,7 @@ class HostedUIASWebAuthenticationSession: NSObject, HostedUISessionBehavior {
             aswebAuthenticationSession.prefersEphemeralWebBrowserSession = inPrivate
 
             DispatchQueue.main.async {
-                var canStart = true
-                if #available(macOS 10.15.4, iOS 13.4, *) {
-                    canStart = aswebAuthenticationSession.canStart
-                }
-                if Test.isSignIn {
-                    canStart = false
-                }
-                if canStart {
-                    start(session: session, continuation: continuation)
-                } else {
-                    continuation.resume(throwing: HostedUIError.invalidContext)
-                }
+                start(session: aswebAuthenticationSession, continuation: continuation)
             }
         }
 
@@ -85,13 +74,21 @@ class HostedUIASWebAuthenticationSession: NSObject, HostedUISessionBehavior {
     #endif
     }
 
-    private func start(session: ASWebAuthenticationSession, continuation: CheckedContinuation<URL, Error>, attempts: Int = 0) {
+    private func start(session: ASWebAuthenticationSession, continuation: CheckedContinuation<[URLQueryItem], any Error>, attempts: Int = 0) {
+        var canStart = true
+        if #available(macOS 10.15.4, iOS 13.4, *) {
+            canStart = aswebAuthenticationSession.canStart
+        }
+        if Test.isSignIn {
+            canStart = false
+        }
+        
         if session.canStart {
             session.start()
         } else if attempts < 10 {
             Test.isSignIn = false
             DispatchQueue.main.asyncAfter(deadline: .now().advanced(by: .milliseconds(100))) {
-                start(session: session, continuation: continuation, attempts: attempts + 1)
+                self.start(session: session, continuation: continuation, attempts: attempts + 1)
             }
         } else {
             continuation.resume(throwing: HostedUIError.invalidContext)
