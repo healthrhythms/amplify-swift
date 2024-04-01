@@ -73,7 +73,7 @@ class HostedUIASWebAuthenticationSession: NSObject, HostedUISessionBehavior {
                     canStart = false
                 }
                 if canStart {
-                    aswebAuthenticationSession.start()
+                    start(session: session, continuation: continuation)
                 } else {
                     continuation.resume(throwing: HostedUIError.invalidContext)
                 }
@@ -83,6 +83,19 @@ class HostedUIASWebAuthenticationSession: NSObject, HostedUISessionBehavior {
     #else
         throw HostedUIError.serviceMessage("HostedUI is only available in iOS and macOS")
     #endif
+    }
+
+    private func start(session: ASWebAuthenticationSession, continuation: CheckedContinuation<URL, Error>, attempts: Int = 0) {
+        if session.canStart {
+            session.start()
+        } else if attempts < 10 {
+            Test.isSignIn = false
+            DispatchQueue.main.asyncAfter(deadline: .now().advanced(by: .milliseconds(100))) {
+                start(session: session, continuation: continuation, attempts: attempts + 1)
+            }
+        } else {
+            continuation.resume(throwing: HostedUIError.invalidContext)
+        }
     }
 
 #if os(iOS) || os(macOS)
