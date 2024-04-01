@@ -11,7 +11,7 @@ import Amplify
 import AuthenticationServices
 #endif
 
-public enum Test {
+public enum AmplifyLogger {
     public static var logMessage: ((String) -> Void)? = nil
 }
 
@@ -81,15 +81,15 @@ class HostedUIASWebAuthenticationSession: NSObject, HostedUISessionBehavior {
         }
         
         if canStart {
-            Test.logMessage?("amplify auth can start is true")
+            AmplifyLogger.logMessage?("amplify auth can start is true")
             session.start()
         } else if attempts < 10 {
-            Test.logMessage?("amplify auth can start is false, waiting 300 milliseconds before trying again")
+            AmplifyLogger.logMessage?("amplify auth can start is false, waiting 300 milliseconds before trying again")
             DispatchQueue.main.asyncAfter(deadline: .now().advanced(by: .milliseconds(300))) {
                 self.start(session: session, continuation: continuation, attempts: attempts + 1)
             }
         } else {
-            Test.logMessage?("amplify auth can start is still false after 1 second, throw error")
+            AmplifyLogger.logMessage?("amplify auth can start is still false after 1 second, throw error")
             continuation.resume(throwing: HostedUIError.invalidContext)
         }
     }
