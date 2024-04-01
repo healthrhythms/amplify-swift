@@ -89,7 +89,7 @@ class HostedUIASWebAuthenticationSession: NSObject, HostedUISessionBehavior {
                 self.start(session: session, continuation: continuation, attempts: attempts + 1)
             }
         } else {
-            AmplifyLogger.logMessage?("amplify auth can start is still false after 1 second, throw error")
+            AmplifyLogger.logMessage?("amplify auth can start is still false after 10 attempts, throwing error")
             continuation.resume(throwing: HostedUIError.invalidContext)
         }
     }
