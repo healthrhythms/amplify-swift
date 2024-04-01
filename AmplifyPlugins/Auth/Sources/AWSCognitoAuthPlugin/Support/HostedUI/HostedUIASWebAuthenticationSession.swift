@@ -84,8 +84,8 @@ class HostedUIASWebAuthenticationSession: NSObject, HostedUISessionBehavior {
             Test.logMessage?("amplify auth can start is true")
             session.start()
         } else if attempts < 10 {
-            Test.logMessage?("amplify auth can start is false, waiting 100 milliseconds before trying again")
-            DispatchQueue.main.asyncAfter(deadline: .now().advanced(by: .milliseconds(100))) {
+            Test.logMessage?("amplify auth can start is false, waiting 300 milliseconds before trying again")
+            DispatchQueue.main.asyncAfter(deadline: .now().advanced(by: .milliseconds(300))) {
                 self.start(session: session, continuation: continuation, attempts: attempts + 1)
             }
         } else {
