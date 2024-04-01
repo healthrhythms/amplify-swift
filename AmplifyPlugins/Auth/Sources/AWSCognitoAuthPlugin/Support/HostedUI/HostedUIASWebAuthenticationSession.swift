@@ -11,6 +11,10 @@ import Amplify
 import AuthenticationServices
 #endif
 
+public enum Test {
+    static var isSignIn = false
+}
+
 class HostedUIASWebAuthenticationSession: NSObject, HostedUISessionBehavior {
 
     weak var webPresentation: AuthUIPresentationAnchor?
@@ -64,6 +68,9 @@ class HostedUIASWebAuthenticationSession: NSObject, HostedUISessionBehavior {
                 var canStart = true
                 if #available(macOS 10.15.4, iOS 13.4, *) {
                     canStart = aswebAuthenticationSession.canStart
+                }
+                if Test.isSignIn {
+                    canStart = false
                 }
                 if canStart {
                     aswebAuthenticationSession.start()
